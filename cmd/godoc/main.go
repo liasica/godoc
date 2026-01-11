@@ -6,6 +6,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"path/filepath"
 	"strings"
@@ -17,16 +18,27 @@ import (
 )
 
 func main() {
-	// allow specifying config path
+	// --version
+	versionFlag := flag.Bool("version", false, "print version information")
+	// shorthand -v for version
+	shortVersion := flag.Bool("v", false, "shorthand for --version")
+
+	// --config
 	cfgPath := flag.String("config", ".godoc.yaml", "path to config YAML file")
 	flag.Parse()
+
+	if *versionFlag || *shortVersion {
+		fmt.Println(godoc.FullVersion())
+		return
+	}
 
 	cfg, err := godoc.LoadConfig(godoc.ResolveConfigPath(*cfgPath))
 	if err != nil {
 		log.Fatalf("failed to load configuration: %v", err)
 	}
 
-	gim, err := godoc.NewGoMod()
+	var gim *godoc.GoMod
+	gim, err = godoc.NewGoMod()
 	if err != nil {
 		log.Fatalf("dependency resolution failed: %v", err)
 	}
