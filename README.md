@@ -147,4 +147,4 @@ Contributions via Pull Request or Issue are welcome. If you want me to translate
 
 ## License
 
-No license is specified in this repository — if you plan to publish or share it, choose an appropriate open source license (for example MIT or Apache-2.0) before merging.
+This project is licensed under the MIT License — see the LICENSE file for details.
