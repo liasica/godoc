@@ -16,32 +16,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-
-      - name: Get Previous Hash
-        id: get_previous_hash
-        run: |
-          previous_tag=$(git tag -l "v*.*.*" --sort=-version:refname | sed -n '2p')
-          
-          if [ -n "$previous_tag" ]; then
-            previous_hash=$(git rev-parse "$previous_tag")
-            echo "Previous tag: $previous_tag, hash: $previous_hash"
-          else
-            previous_hash=$(git rev-list --max-parents=0 -n 1 HEAD)
-            echo "No previous tag found, using first commit: $previous_hash"
-          fi
-          
-          echo "previous_hash=$previous_hash" >> $GITHUB_OUTPUT
+        with:
+          fetch-depth: 0
 
       - name: Generate changelog
         id: generate_changelog
-        uses: mikepenz/release-changelog-builder-action@v5
+        uses: mikepenz/release-changelog-builder-action@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           mode: 'COMMIT'
           configuration: 'changelog.configure.json'
-          fromTag: ${{ steps.get_previous_hash.outputs.previous_hash }}
-          toTag: ${{ github.ref_name }}
 
       - name: Set up Go
         uses: actions/setup-go@v6
@@ -50,6 +35,8 @@ jobs:
 
       - name: Make Binary
         run: |
+          echo "Changelog: ${{ steps.generate_changelog.outputs.changelog }}"
+          echo "Building binary..."
           make clean
           make build
 
