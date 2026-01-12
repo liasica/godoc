@@ -37,6 +37,13 @@ func configInit() *cobra.Command {
 		Short:             "Initialize configuration",
 		CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true},
 		Run: func(_ *cobra.Command, _ []string) {
+			// detect if config file already exists
+			if _, err := os.Stat(".godoc.yaml"); err == nil {
+				fmt.Println("configuration file .godoc.yaml already exists")
+				os.Exit(1)
+			}
+
+			// write default config to .godoc.yaml
 			defaultCfg := godoc.DefaultConfig()
 			fmt.Printf("default configuration:\n%s", defaultCfg)
 			err := os.WriteFile(".godoc.yaml", []byte(defaultCfg), os.ModePerm)
