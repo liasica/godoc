@@ -18,31 +18,33 @@ type GoMod struct {
 	modcachePath string
 }
 
-func NewGoMod() (gm *GoMod, err error) {
+func NewGoMod(basePath string) (gm *GoMod, err error) {
+	p := filepath.Join(basePath, "go.mod")
+
 	var b []byte
-	b, err = os.ReadFile("go.mod")
+	b, err = os.ReadFile(p)
 	if err != nil {
 		return
 	}
 
 	var f *modfile.File
-	f, err = modfile.Parse("go.mod", b, nil)
+	f, err = modfile.Parse(p, b, nil)
 	if err != nil {
 		return
 	}
 
-	p := GetGomodcache()
-	if p == "" {
+	cache := GetGomodcache()
+	if cache == "" {
 		return nil, errors.New("failed to read GOMODCACHE environment variable")
 	}
 
 	return &GoMod{
 		modfile:      f,
-		modcachePath: p,
+		modcachePath: cache,
 	}, nil
 }
 
-func (gm *GoMod) GetPath(module string, subpath string) (p string, err error) {
+func (gm *GoMod) GetPath(basePath string, module string, subpath string) (p string, err error) {
 	var found *modfile.Require
 	for _, require := range gm.modfile.Require {
 		if require.Mod.Path == module {
@@ -60,7 +62,7 @@ func (gm *GoMod) GetPath(module string, subpath string) (p string, err error) {
 		if replace.Old.Path == module {
 			if isLocalPath(replace.New.Path) {
 				// If it's a local path, return it directly
-				p = replace.New.Path
+				p = filepath.Join(basePath, replace.New.Path)
 			} else {
 				// Otherwise return the replaced path inside the module cache
 				p = filepath.Join(gm.modcachePath, replace.New.Path+"@"+replace.New.Version)

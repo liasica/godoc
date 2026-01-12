@@ -24,17 +24,23 @@ func main() {
 
 	genGroup, genCommand := internal.Generate()
 	cfgGroup, cfgCommand := internal.Config()
+	previewGroup, previewCommand := internal.Preview()
 
-	cmd.AddGroup(genGroup, cfgGroup)
+	cmd.AddGroup(
+		genGroup,
+		cfgGroup,
+		previewGroup,
+	)
 
 	cmd.AddCommand(
 		genCommand,
 		cfgCommand,
+		previewCommand,
 	)
 
 	err := cmd.Execute()
 	if err != nil {
-		fmt.Printf("command execution failed: %v", err)
+		fmt.Printf("command execution failed: %v\n", err)
 		os.Exit(1)
 	}
 }

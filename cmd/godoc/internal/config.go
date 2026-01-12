@@ -45,7 +45,7 @@ func configInit() *cobra.Command {
 
 			// write default config to .godoc.yaml
 			defaultCfg := godoc.DefaultConfig()
-			fmt.Printf("default configuration:\n%s", defaultCfg)
+			fmt.Printf("default configuration:\n%s\n", defaultCfg)
 			err := os.WriteFile(".godoc.yaml", []byte(defaultCfg), os.ModePerm)
 			if err != nil {
 				fmt.Printf("failed to write configuration file: %v\n", err)
