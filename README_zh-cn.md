@@ -18,31 +18,33 @@
 
 ## 快速开始
 
-1. 克隆/进入仓库
+1. 克隆或进入仓库。
 
-2. 使用默认配置（当目录下没有 `.godoc.yaml` 时，程序会使用内置默认值）：
-
-```bash
-go run ./cmd/godoc
-```
-
-或构建二进制并运行：
+2. 构建 CLI 并运行 `generate` 子命令（推荐）：
 
 ```bash
+# 构建并运行二进制文件
 go build -o godoc ./cmd/godoc
-./godoc
+./godoc generate -c .godoc.yaml
 ```
 
-3. 使用自定义配置文件（推荐，在多模块或需要自定义扫描路径时）：
+或者直接使用 `go run`（示例如何传入必需的配置标志）：
 
 ```bash
-# 指定配置文件路径
-go run ./cmd/godoc -config .godoc.yaml
-# 或
-./godoc -config .godoc.yaml
+# 使用显式配置路径运行 generate
+go run ./cmd/godoc generate -c .godoc.yaml
 ```
 
-生成的文档（yaml）默认输出到：
+3. 使用 `config init` 命令创建默认配置文件（便捷 helper）：
+
+```bash
+# 在当前目录创建 .godoc.yaml
+./godoc config init
+# 或
+go run ./cmd/godoc config init
+```
+
+生成的文档（YAML）默认写入：
 
 ```
 ./assets/docs/swagger.yaml
@@ -50,7 +52,7 @@ go run ./cmd/godoc -config .godoc.yaml
 
 ## 配置（`.godoc.yaml`）
 
-现在 `externalPaths`、`paths`、`mainFile`、`output` 都可以通过一个 YAML 配置文件来配置。默认配置文件名为 `.godoc.yaml`，也可以通过 `-config`（或 `--config`）命令行参数指定其他路径。
+`externalPaths`、`paths`、`mainFile`、`output` 都可以通过 YAML 配置文件配置。默认配置文件名为 `.godoc.yaml`；也可以使用 `-config`（或 `--config`）命令行标志指定其他路径。
 
 示例配置：
 
@@ -72,26 +74,38 @@ output: "./assets/docs/"
 ```
 
 字段说明：
-- `externalPaths`：map[string]string，键为 `module/path`，值为模块内的子路径（会通过 `go.mod` 的 `require`/`replace` 和 `GOMODCACHE` 来解析实际路径并加入扫描列表）。
+- `externalPaths`：map[string]string，键为 `module/path`，值为模块内的子路径（工具会通过 `go.mod` 的 `require`/`replace` 和 `GOMODCACHE` 来解析实际路径并加入扫描列表）。
 - `paths`：要扫描的本地路径数组（相对于仓库根目录或绝对路径），会被 join 为 `SearchDir` 传给 `swag`。
 - `mainFile`：`swag` 查找主入口的文件名（例如 `route.go`）。
 - `output`：生成文档的输出目录（目录路径，`swag` 会在该目录写入 `swagger.yaml`）。
 
-> 注意：当配置文件不存在时，程序会使用默认值（可参见 `internal.LoadConfig` 的默认配置）。
+> 注意：当配置文件不存在时，程序会使用默认值（参见 `internal.LoadConfig` 的默认配置）。
 
-## 常用用法说明
+## 使用说明
 
-- 主入口 `cmd/godoc/main.go` 中会读取配置文件（默认 `.godoc.yaml`），然后：
-  - 将 `paths` 与通过 `externalPaths` 解析得到的外部模块路径整合为最终的扫描目录集合。
-  - 使用 `swaggo/swag` 的 `format` 与 `gen` 生成 `swagger.yaml`（当前默认 `OutputTypes: ["yaml"]`）。
+- CLI 主入口 `cmd/godoc/main.go` 现在暴露了两个子命令：
+  - `generate` — 生成文档。此命令接受可选的 `-config`（或 `--config`）标志，指向 YAML 配置文件；如果省略，则工具会使用内置默认值或当前目录下的 `.godoc.yaml`（若存在）。
+  - `config` — 配置相关工具。使用 `godoc config init` 在当前目录创建默认 `.godoc.yaml`。
 
-- 如果程序报错提示 `GOMODCACHE 环境变量读取失败`，请在运行前确保 `GOMODCACHE` 已设置，通常可以通过：
+- 常用命令及标志：
+  - `godoc generate` — 使用默认配置或当前目录的 `.godoc.yaml` 运行生成。
+  - `godoc generate -c path/to/config.yaml` — 使用显式配置文件运行生成。
+  - `godoc config init` — 在当前目录创建默认 `.godoc.yaml`。
+  - `godoc --version` — 打印 CLI 版本（版本由 `version.go` 提供）。
+  - `godoc help` 或 `godoc <command> --help` — 显示命令帮助与标志说明。
+
+- 典型生成流程：
+  1. 创建或编辑 `.godoc.yaml`（也可以使用 `godoc config init` 创建默认配置）。
+  2. 运行 `godoc generate`（或 `godoc generate -c .godoc.yaml` / `go run ./cmd/godoc generate -c .godoc.yaml`）。
+  3. 工具会解析外部模块路径（使用 `go.mod` 和 `GOMODCACHE`），运行 `swaggo/swag` 的 format 与 gen，然后对生成的 `swagger.yaml` 做后处理。
+
+- 如果程序报错提示 `failed to read GOMODCACHE environment variable`，请确保运行前已设置 `GOMODCACHE`，例如：
 
 ```bash
 export GOMODCACHE=$(go env GOMODCACHE)
 ```
 
-- 枚举后处理：程序运行完 `swag` 生成 `swagger.yaml` 后，会调用 `internal.ConvertEnum2OneOf` 对 `swagger.yaml` 做调整，主要依赖生成器输出的 `enum`、`x-enum-varnames` 与 `x-enum-comments` 字段来生成更友好的 description 并过滤特殊占位值（比如 `-`）。
+- 枚举后处理：`swag` 生成 `swagger.yaml` 后，程序会调用 `internal.ConvertEnum2OneOf` 对文件进行调整。此步骤依赖生成器输出的 `enum`、`x-enum-varnames` 和 `x-enum-comments` 字段，用于生成更友好的 description 并过滤特殊占位值（例如 `-`）。
 
 ## 代码结构（简述）
 
@@ -134,4 +148,3 @@ go test ./...
 ## 许可证
 
 仓库中未指定许可证 —— 若需发布或共享，请在合并前明确选择合适的开源许可证（例如 MIT、Apache-2.0 等）。
-

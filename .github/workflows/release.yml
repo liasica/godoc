@@ -38,7 +38,7 @@ jobs:
           echo "Changelog: ${{ steps.generate_changelog.outputs.changelog }}"
           echo "Building binary..."
           make clean
-          make build
+          make all
 
       - name: Release
         uses: softprops/action-gh-release@v2

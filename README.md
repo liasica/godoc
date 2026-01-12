@@ -20,26 +20,28 @@ A small CLI tool that generates OpenAPI/Swagger documentation from a Go project.
 
 1. Clone or enter the repository.
 
-2. Use the default configuration (the program will use built-in defaults when `.godoc.yaml` is not present):
+2. Build the CLI and run the `generate` subcommand (recommended):
 
 ```bash
-go run ./cmd/godoc
-```
-
-Or build a binary and run:
-
-```bash
+# build and run the binary
 go build -o godoc ./cmd/godoc
-./godoc
+./godoc generate -c .godoc.yaml
 ```
 
-3. Use a custom configuration file (recommended for multi-module projects or when customizing scan paths):
+Or run directly with `go run` (shows how to pass the required config flag):
 
 ```bash
-# specify a configuration file
-go run ./cmd/godoc -config .godoc.yaml
+# run generate with an explicit config path
+go run ./cmd/godoc generate -c .godoc.yaml
+```
+
+3. Create a default configuration file with the `config init` command (convenience helper):
+
+```bash
+# create .godoc.yaml in the current directory
+./godoc config init
 # or
-./godoc -config .godoc.yaml
+go run ./cmd/godoc config init
 ```
 
 Generated documentation (YAML) is written by default to:
@@ -81,9 +83,21 @@ Field descriptions:
 
 ## Usage notes
 
-- The CLI entry `cmd/godoc/main.go` reads the configuration file (default `.godoc.yaml`) and then:
-  - combines `paths` with external module paths resolved from `externalPaths` to form the final set of scan directories.
-  - runs `swaggo/swag` `format` and `gen` to produce `swagger.yaml` (default `OutputTypes: ["yaml"]`).
+- The CLI entry `cmd/godoc/main.go` now exposes distinct subcommands:
+  - `generate` — generate documentation. This command accepts an optional `-config` (or `--config`) flag which points to the YAML configuration file; if omitted the tool will use built-in defaults or `.godoc.yaml` in the current directory.
+  - `config` — configuration helpers. Use `godoc config init` to create a default `.godoc.yaml` in the current directory.
+
+- Common commands and flags:
+  - `godoc generate` — run generation using defaults or `.godoc.yaml` if present.
+  - `godoc generate -c path/to/config.yaml` — run generation using an explicit config file.
+  - `godoc config init` — create a default `.godoc.yaml` in the current directory.
+  - `godoc --version` — print the CLI version (the binary sets the version from `version.go`).
+  - `godoc help` or `godoc <command> --help` — show command help and flags.
+
+- Typical generation flow:
+  1. Create or edit `.godoc.yaml` (or use `godoc config init` to create a default file).
+  2. Run `godoc generate` (or `godoc generate -c .godoc.yaml` / `go run ./cmd/godoc generate -c .godoc.yaml`).
+  3. The tool resolves external module paths (using `go.mod` and `GOMODCACHE`), runs `swaggo/swag` format and gen, then post-processes the generated `swagger.yaml`.
 
 - If the program exits with an error mentioning `failed to read GOMODCACHE environment variable`, ensure `GOMODCACHE` is set before running, for example:
 

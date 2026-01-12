@@ -17,7 +17,8 @@ var (
 	CommitHash = ""
 )
 
-func FullVersion() string {
+// GetVersion returns a detailed version report of the application.
+func GetVersion() string {
 	appName := "godoc"
 
 	// runtime info

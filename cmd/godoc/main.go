@@ -5,101 +5,36 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"log"
-	"path/filepath"
-	"strings"
+	"os"
 
-	"github.com/swaggo/swag/v2/format"
-	"github.com/swaggo/swag/v2/gen"
+	"github.com/spf13/cobra"
 
 	"github.com/liasica/godoc"
+	"github.com/liasica/godoc/cmd/godoc/internal"
 )
 
 func main() {
-	// --version
-	versionFlag := flag.Bool("version", false, "print version information")
-
-	// shorthand -v for version
-	shortVersion := flag.Bool("v", false, "shorthand for --version")
-
-	// --config
-	cfgPath := flag.String("config", ".godoc.yaml", "path to config YAML file")
-
-	// --print default config
-	printDefaultCfg := flag.Bool("print-default-config", false, "print default configuration and exit")
-
-	// Parse flags
-	flag.Parse()
-
-	// print version
-	if *versionFlag || *shortVersion {
-		fmt.Println(godoc.FullVersion())
-		return
+	cmd := cobra.Command{
+		Use:               "godoc",
+		Short:             "godoc is a documentation generator using swaggo/swag for Go projects",
+		CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true},
+		Version:           godoc.GetVersion(),
 	}
 
-	// print default config
-	if *printDefaultCfg {
-		defaultCfg := godoc.DefaultConfig()
-		fmt.Println(defaultCfg)
-		return
-	}
+	genGroup, genCommand := internal.Generate()
+	cfgGroup, cfgCommand := internal.Config()
 
-	// parse config
-	cfg, err := godoc.LoadConfig(godoc.ResolveConfigPath(*cfgPath))
+	cmd.AddGroup(genGroup, cfgGroup)
+
+	cmd.AddCommand(
+		genCommand,
+		cfgCommand,
+	)
+
+	err := cmd.Execute()
 	if err != nil {
-		log.Fatalf("failed to load configuration: %v", err)
-	}
-
-	var gim *godoc.GoMod
-	gim, err = godoc.NewGoMod()
-	if err != nil {
-		log.Fatalf("dependency resolution failed: %v", err)
-	}
-
-	externalPaths := cfg.ExternalPath
-	paths := cfg.Path
-
-	for ep, sub := range externalPaths {
-		var p string
-		p, err = gim.GetPath(ep, sub)
-		if err != nil {
-			log.Fatalf("dependency resolution failed: %v", err)
-		}
-		paths = append(paths, p)
-	}
-
-	mainFile := cfg.MainFile
-	output := cfg.Output
-	searchDir := strings.Join(paths, ",")
-
-	log.Printf("starting documentation generation: main=%s, deps=%s, output=%s", mainFile, searchDir, output)
-
-	log.Println("formatting...")
-	err = format.New().Build(&format.Config{
-		SearchDir: searchDir,
-		MainFile:  mainFile,
-	})
-	if err != nil {
-		log.Fatalf("formatting failed: %v", err)
-	}
-
-	log.Println("generating documentation...")
-	err = gen.New().Build(&gen.Config{
-		SearchDir:   searchDir,
-		MainAPIFile: mainFile,
-		// ParseDependency: 1,
-		OutputDir:           output,
-		OutputTypes:         cfg.OutputTypes,
-		GenerateOpenAPI3Doc: true,
-	})
-	if err != nil {
-		log.Fatalf("documentation generation failed: %v", err)
-	}
-
-	err = godoc.ConvertEnum2OneOf(filepath.Join(output, "swagger.yaml"))
-	if err != nil {
-		log.Fatalf("enum conversion failed: %v", err)
+		fmt.Printf("command execution failed: %v", err)
+		os.Exit(1)
 	}
 }
