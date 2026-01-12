@@ -19,6 +19,29 @@ type Config struct {
 	OutputTypes  []string          `yaml:"outputTypes"`
 }
 
+func defaultConfig() *Config {
+	return &Config{
+		ExternalPath: map[string]string{},
+		Path: []string{
+			"./internal/app/rest/route",
+			"./internal/app/rest/controller",
+			"./internal/infrastructure/model",
+			"./internal/infrastructure/vo",
+			"./internal/presentation/pagination",
+			"./internal/presentation/entity",
+		},
+		MainFile: "route.go",
+		Output:   "./assets/docs/",
+	}
+}
+
+// DefaultConfig returns the default configuration as a YAML string.
+func DefaultConfig() string {
+	defaultCfg := defaultConfig()
+	b, _ := yaml.Marshal(defaultCfg)
+	return string(b)
+}
+
 // LoadConfig reads a YAML config file. If path is empty, uses ".godoc.yaml" in cwd.
 // It returns a Config with defaults applied when fields are missing.
 func LoadConfig(path string) (cfg *Config, err error) {
@@ -26,7 +49,8 @@ func LoadConfig(path string) (cfg *Config, err error) {
 		path = ".godoc.yaml"
 	}
 
-	b, err := os.ReadFile(path)
+	var b []byte
+	b, err = os.ReadFile(path)
 	if err != nil {
 		// If file not found, return defaults rather than error
 		if os.IsNotExist(err) {
@@ -42,22 +66,6 @@ func LoadConfig(path string) (cfg *Config, err error) {
 
 	applyDefaults(&c)
 	return &c, nil
-}
-
-func defaultConfig() *Config {
-	return &Config{
-		ExternalPath: map[string]string{},
-		Path: []string{
-			"./internal/app/rest/route",
-			"./internal/app/rest/controller",
-			"./internal/infrastructure/model",
-			"./internal/infrastructure/vo",
-			"./internal/presentation/pagination",
-			"./internal/presentation/entity",
-		},
-		MainFile: "route.go",
-		Output:   "./assets/docs/",
-	}
 }
 
 func applyDefaults(c *Config) {

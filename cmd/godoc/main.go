@@ -20,18 +20,33 @@ import (
 func main() {
 	// --version
 	versionFlag := flag.Bool("version", false, "print version information")
+
 	// shorthand -v for version
 	shortVersion := flag.Bool("v", false, "shorthand for --version")
 
 	// --config
 	cfgPath := flag.String("config", ".godoc.yaml", "path to config YAML file")
+
+	// --print default config
+	printDefaultCfg := flag.Bool("print-default-config", false, "print default configuration and exit")
+
+	// Parse flags
 	flag.Parse()
 
+	// print version
 	if *versionFlag || *shortVersion {
 		fmt.Println(godoc.FullVersion())
 		return
 	}
 
+	// print default config
+	if *printDefaultCfg {
+		defaultCfg := godoc.DefaultConfig()
+		fmt.Println(defaultCfg)
+		return
+	}
+
+	// parse config
 	cfg, err := godoc.LoadConfig(godoc.ResolveConfigPath(*cfgPath))
 	if err != nil {
 		log.Fatalf("failed to load configuration: %v", err)
