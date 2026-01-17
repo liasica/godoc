@@ -1,4 +1,4 @@
-SHELL := /bin/bash
+#!/usr/bin/env bash
 
 BINARY := godoc
 PKG := github.com/liasica/godoc
