@@ -16,33 +16,78 @@ A small CLI tool that generates OpenAPI/Swagger documentation from a Go project.
 - Dependencies declared in `go.mod` (the repository uses `swaggo/swag`, `gopkg.in/yaml.v3`, `golang.org/x/mod`, etc.).
 - The `GOMODCACHE` environment variable must be readable (the program uses it to locate the module cache).
 
-## Quick start
+## Installation
 
-1. Clone or enter the repository.
+### Option 1: Using the install script (recommended)
 
-2. Build the CLI and run the `generate` subcommand (recommended):
+Use the provided `install.sh` script to automatically download and install the latest version:
 
 ```bash
-# build and run the binary
-go build -o godoc ./cmd/godoc
-./godoc generate -c .godoc.yaml
+# Download and run the install script
+curl -fsSL https://raw.githubusercontent.com/liasica/godoc/main/install.sh | bash
 ```
 
-Or run directly with `go run` (shows how to pass the required config flag):
+Or clone the repository and run locally:
 
 ```bash
-# run generate with an explicit config path
+# Clone the repository
+git clone https://github.com/liasica/godoc.git
+cd godoc
+
+# Run the install script
+bash install.sh
+```
+
+The install script will:
+- Automatically detect your OS and architecture (supports Linux, macOS, Windows on amd64 and arm64)
+- Download the corresponding pre-built binary from GitHub Releases
+- Install the binary to `$GOPATH/bin`
+- Check the installed version and upgrade automatically if a new version is available
+- Verify the installation was successful
+
+> Note: The install script requires a Go environment (to get `GOPATH`) and the `curl` command. After installation, make sure `$GOPATH/bin` is in your `PATH`.
+
+### Option 2: Build from source
+
+If you want to build from source:
+
+```bash
+# Clone the repository
+git clone https://github.com/liasica/godoc.git
+cd godoc
+
+# Build the binary
+go build -o godoc ./cmd/godoc
+
+# (Optional) Move the binary to a directory in your PATH
+mv godoc $GOPATH/bin/
+```
+
+## Quick start
+
+1. Create a default configuration file with the `config init` command:
+
+```bash
+# Create .godoc.yaml in the current directory
+godoc config init
+```
+
+2. Edit the `.godoc.yaml` configuration file according to your project needs.
+
+3. Run the `generate` subcommand to generate documentation:
+
+```bash
+# Run generation with the config file
+godoc generate -c .godoc.yaml
+```
+
+Or run directly with `go run` (for development/debugging):
+
+```bash
+# Run generate with an explicit config path
 go run ./cmd/godoc generate -c .godoc.yaml
 ```
 
-3. Create a default configuration file with the `config init` command (convenience helper):
-
-```bash
-# create .godoc.yaml in the current directory
-./godoc config init
-# or
-go run ./cmd/godoc config init
-```
 
 Generated documentation (YAML) is written by default to:
 

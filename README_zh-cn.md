@@ -16,33 +16,78 @@
 - 已在 `go.mod` 中声明的依赖（仓库内已使用 `swaggo/swag`、`gopkg.in/yaml.v3`、`golang.org/x/mod` 等）。
 - 环境变量 `GOMODCACHE` 必须可读（程序会使用它定位 module cache）。
 
-## 快速开始
+## 安装
 
-1. 克隆或进入仓库。
+### 方式一：使用安装脚本（推荐）
 
-2. 构建 CLI 并运行 `generate` 子命令（推荐）：
+使用提供的 `install.sh` 脚本自动下载并安装最新版本：
 
 ```bash
-# 构建并运行二进制文件
-go build -o godoc ./cmd/godoc
-./godoc generate -c .godoc.yaml
+# 下载并运行安装脚本
+curl -fsSL https://raw.githubusercontent.com/liasica/godoc/main/install.sh | bash
 ```
 
-或者直接使用 `go run`（示例如何传入必需的配置标志）：
+或者克隆仓库后本地运行：
+
+```bash
+# 克隆仓库
+git clone https://github.com/liasica/godoc.git
+cd godoc
+
+# 运行安装脚本
+bash install.sh
+```
+
+安装脚本会：
+- 自动检测您的操作系统和架构（支持 Linux、macOS、Windows 的 amd64 和 arm64 架构）
+- 从 GitHub Releases 下载对应平台的预编译二进制文件
+- 将二进制文件安装到 `$GOPATH/bin` 目录
+- 检查已安装版本，如果有新版本则自动升级
+- 验证安装是否成功
+
+> 注意：安装脚本需要 Go 环境（用于获取 `GOPATH`）和 `curl` 命令。安装完成后，请确保 `$GOPATH/bin` 已添加到您的 `PATH` 环境变量中。
+
+### 方式二：从源码构建
+
+如果您想从源码构建，可以按照以下步骤：
+
+```bash
+# 克隆仓库
+git clone https://github.com/liasica/godoc.git
+cd godoc
+
+# 构建二进制文件
+go build -o godoc ./cmd/godoc
+
+# （可选）将二进制文件移动到 PATH 中的目录
+mv godoc $GOPATH/bin/
+```
+
+## 快速开始
+
+1. 使用 `config init` 命令创建默认配置文件：
+
+```bash
+# 在当前目录创建 .godoc.yaml
+godoc config init
+```
+
+2. 根据您的项目需求编辑 `.godoc.yaml` 配置文件。
+
+3. 运行 `generate` 子命令生成文档：
+
+```bash
+# 使用配置文件运行生成
+godoc generate -c .godoc.yaml
+```
+
+或者直接使用 `go run`（适用于开发调试）：
 
 ```bash
 # 使用显式配置路径运行 generate
 go run ./cmd/godoc generate -c .godoc.yaml
 ```
 
-3. 使用 `config init` 命令创建默认配置文件（便捷 helper）：
-
-```bash
-# 在当前目录创建 .godoc.yaml
-./godoc config init
-# 或
-go run ./cmd/godoc config init
-```
 
 生成的文档（YAML）默认写入：
 
