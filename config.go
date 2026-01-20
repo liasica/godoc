@@ -27,7 +27,7 @@ func defaultConfig() *Config {
 			"./internal/app/rest/controller",
 			"./internal/infrastructure/model",
 			"./internal/infrastructure/vo",
-			"./internal/presentation/pagination",
+			"./internal/infrastructure/dao/pagination",
 			"./internal/presentation/entity",
 		},
 		MainFile: "route.go",
