@@ -19,8 +19,6 @@ func Generate() (*cobra.Group, *cobra.Command) {
 		Title: "Documentation Generation Commands",
 	}
 
-	var cfgPath string
-
 	cmd := &cobra.Command{
 		Use:               "generate",
 		Short:             "Generate documentation for Go projects",
@@ -35,6 +33,5 @@ func Generate() (*cobra.Group, *cobra.Command) {
 		},
 	}
 
-	cmd.Flags().StringVarP(&cfgPath, "config", "c", ".godoc.yaml", "path to config YAML file")
 	return g, cmd
 }

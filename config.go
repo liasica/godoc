@@ -12,11 +12,14 @@ import (
 )
 
 type Config struct {
-	MainFile     string            `yaml:"mainFile"`
-	ExternalPath map[string]string `yaml:"externalPath"`
-	Path         []string          `yaml:"path"`
-	Output       string            `yaml:"output"`
-	OutputTypes  []string          `yaml:"outputTypes"`
+	basePath string
+
+	MainFile         string            `yaml:"mainFile"`
+	MarkdownFilesDir string            `yaml:"markdownFilesDir"`
+	ExternalPath     map[string]string `yaml:"externalPath"`
+	Path             []string          `yaml:"path"`
+	Output           string            `yaml:"output"`
+	OutputTypes      []string          `yaml:"outputTypes"`
 }
 
 func defaultConfig() *Config {
@@ -65,6 +68,9 @@ func LoadConfig(path string) (cfg *Config, err error) {
 	}
 
 	applyDefaults(&c)
+
+	c.basePath = filepath.Dir(path)
+
 	return &c, nil
 }
 
@@ -98,4 +104,9 @@ func ResolveConfigPath(p string) string {
 		}
 	}
 	return p
+}
+
+// ResolveAbsPath resolves dir relative to the config file's base path.
+func (c *Config) ResolveAbsPath(dir string) (string, error) {
+	return filepath.Abs(filepath.Join(c.basePath, dir))
 }

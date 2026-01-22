@@ -13,6 +13,7 @@ import (
 	"github.com/swaggo/swag/v2/gen"
 )
 
+// Generate generates documentation based on the provided configuration file path.
 func Generate(cfgPath string) error {
 	basePath := filepath.Dir(cfgPath)
 
@@ -61,14 +62,24 @@ func Generate(cfgPath string) error {
 	}
 
 	fmt.Println("generating documentation...")
-	err = gen.New().Build(&gen.Config{
+	gc := &gen.Config{
 		SearchDir:   searchDir,
 		MainAPIFile: mainFile,
 		// ParseDependency: 1,
 		OutputDir:           output,
 		OutputTypes:         cfg.OutputTypes,
 		GenerateOpenAPI3Doc: true,
-	})
+	}
+
+	// resolve Markdown files directory
+	if cfg.MarkdownFilesDir != "" {
+		gc.MarkdownFilesDir, err = cfg.ResolveAbsPath(cfg.MarkdownFilesDir)
+		if err != nil {
+			return fmt.Errorf("failed to resolve markdown files directory: %v\n", err)
+		}
+	}
+
+	err = gen.New().Build(gc)
 	if err != nil {
 		return fmt.Errorf("documentation generation failed: %v\n", err)
 	}

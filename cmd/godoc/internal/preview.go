@@ -22,7 +22,6 @@ func Preview() (*cobra.Group, *cobra.Command) {
 	var (
 		address  string
 		generate bool
-		cfgPath  string
 	)
 
 	cmd := &cobra.Command{
@@ -60,7 +59,6 @@ func Preview() (*cobra.Group, *cobra.Command) {
 
 	cmd.Flags().StringVarP(&address, "address", "a", "", "address to run the preview server on, if empty, a random available port will be used")
 	cmd.Flags().BoolVarP(&generate, "generate", "g", false, "generate documentation before starting the preview server")
-	cmd.Flags().StringVarP(&cfgPath, "config", "c", ".godoc.yaml", "path to config YAML file")
 
 	return g, cmd
 }

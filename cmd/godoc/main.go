@@ -15,11 +15,16 @@ import (
 )
 
 func main() {
+	var cfgPath string
+
 	cmd := cobra.Command{
 		Use:               "godoc",
 		Short:             "godoc is a documentation generator using swaggo/swag for Go projects",
 		CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true},
 		Version:           godoc.GetVersion(),
+		PersistentPreRun: func(_ *cobra.Command, _ []string) {
+			internal.SetCfgPath(cfgPath)
+		},
 	}
 
 	genGroup, genCommand := internal.Generate()
@@ -37,6 +42,8 @@ func main() {
 		cfgCommand,
 		previewCommand,
 	)
+
+	cmd.PersistentFlags().StringVarP(&cfgPath, "config", "c", ".godoc.yaml", "path to config YAML file")
 
 	err := cmd.Execute()
 	if err != nil {
