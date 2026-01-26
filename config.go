@@ -61,34 +61,14 @@ func LoadConfig(path string) (cfg *Config, err error) {
 		return nil, err
 	}
 
-	var c Config
-	if err = yaml.Unmarshal(b, &c); err != nil {
+	cfg = defaultConfig()
+	if err = yaml.Unmarshal(b, cfg); err != nil {
 		return nil, err
 	}
 
-	applyDefaults(&c)
+	cfg.basePath = filepath.Dir(path)
 
-	c.basePath = filepath.Dir(path)
-
-	return &c, nil
-}
-
-func applyDefaults(c *Config) {
-	if c.ExternalPath == nil {
-		c.ExternalPath = map[string]string{}
-	}
-	if c.Path == nil || len(c.Path) == 0 {
-		c.Path = defaultConfig().Path
-	}
-	if c.MainFile == "" {
-		c.MainFile = "route.go"
-	}
-	if c.Output == "" {
-		c.Output = "./assets/docs/"
-	}
-	if c.OutputTypes == nil || len(c.OutputTypes) == 0 {
-		c.OutputTypes = []string{"yaml"}
-	}
+	return
 }
 
 // ResolveConfigPath returns an absolute path for config if provided relative.
