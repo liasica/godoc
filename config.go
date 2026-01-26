@@ -26,12 +26,11 @@ func defaultConfig() *Config {
 	return &Config{
 		ExternalPath: map[string]string{},
 		Path: []string{
-			"./internal/app/rest/route",
-			"./internal/app/rest/controller",
+			"./internal/interface/http/router",
+			"./internal/interface/http/handler",
 			"./internal/infrastructure/model",
-			"./internal/infrastructure/vo",
 			"./internal/infrastructure/dao/pagination",
-			"./internal/presentation/entity",
+			"./internal/presentation/dto",
 		},
 		MainFile: "route.go",
 		Output:   "./assets/docs/",
