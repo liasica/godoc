@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/swaggo/swag/v2/format"
-	"github.com/swaggo/swag/v2/gen"
+	"github.com/liasica/swag/v2/format"
+	"github.com/liasica/swag/v2/gen"
 )
 
 // Generate generates documentation based on the provided configuration file path.

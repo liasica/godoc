@@ -86,8 +86,12 @@ godoc generate -c .godoc.yaml
 ```bash
 # 使用显式配置路径运行 generate
 go run ./cmd/godoc generate -c .godoc.yaml
+
+# 如果需要自动下载依赖，可以使用 -mod=mod
+go run -mod=mod ./cmd/godoc generate -c .godoc.yaml
 ```
 
+> 注意：`-mod=mod` 标志会告诉 Go 在需要时自动下载和更新依赖。这在首次运行工具或依赖缺失时很有用。
 
 生成的文档（YAML）默认写入：
 

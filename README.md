@@ -86,8 +86,12 @@ Or run directly with `go run` (for development/debugging):
 ```bash
 # Run generate with an explicit config path
 go run ./cmd/godoc generate -c .godoc.yaml
+
+# If you need to download dependencies automatically, use -mod=mod
+go run -mod=mod ./cmd/godoc generate -c .godoc.yaml
 ```
 
+> Note: The `-mod=mod` flag tells Go to automatically download and update dependencies as needed. This is useful when running the tool for the first time or when dependencies are missing.
 
 Generated documentation (YAML) is written by default to:
 
