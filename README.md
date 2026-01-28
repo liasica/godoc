@@ -24,7 +24,7 @@ Use the provided `install.sh` script to automatically download and install the l
 
 ```bash
 # Download and run the install script
-curl -fsSL https://raw.githubusercontent.com/liasica/godoc/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/liasica/godoc/master/install.sh | bash
 ```
 
 Or clone the repository and run locally:

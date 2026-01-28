@@ -34,6 +34,9 @@ func defaultConfig() *Config {
 		},
 		MainFile: "route.go",
 		Output:   "./assets/docs/",
+		OutputTypes: []string{
+			"yaml",
+		},
 	}
 }
 

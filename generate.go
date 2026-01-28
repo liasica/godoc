@@ -62,13 +62,35 @@ func Generate(cfgPath string) error {
 	}
 
 	fmt.Println("generating documentation...")
+
+	// Ensure OutputTypes includes yaml format for swagger.yaml generation
+	outputTypes := cfg.OutputTypes
+	if len(outputTypes) == 0 {
+		outputTypes = []string{"yaml"}
+		fmt.Println("using default output types: [yaml]")
+	} else {
+		// Check if yaml is included
+		hasYaml := false
+		for _, t := range outputTypes {
+			if t == "yaml" {
+				hasYaml = true
+				break
+			}
+		}
+		if !hasYaml {
+			outputTypes = append(outputTypes, "yaml")
+		}
+		fmt.Printf("output types: %v\n", outputTypes)
+	}
+
 	gc := &gen.Config{
 		SearchDir:   searchDir,
 		MainAPIFile: mainFile,
 		// ParseDependency: 1,
 		OutputDir:           output,
-		OutputTypes:         cfg.OutputTypes,
+		OutputTypes:         outputTypes,
 		GenerateOpenAPI3Doc: true,
+		Debugger:            NewLogger(),
 	}
 
 	// resolve Markdown files directory

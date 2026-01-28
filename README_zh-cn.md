@@ -24,7 +24,7 @@
 
 ```bash
 # 下载并运行安装脚本
-curl -fsSL https://raw.githubusercontent.com/liasica/godoc/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/liasica/godoc/master/install.sh | bash
 ```
 
 或者克隆仓库后本地运行：
