@@ -42,6 +42,8 @@ github.com/liasica/swag/v2 v2.0.0-rc5.0.20260126005255-19a914b554f0 h1:10PEd6WK4
 github.com/liasica/swag/v2 v2.0.0-rc5.0.20260126005255-19a914b554f0/go.mod h1:i6L9Qnjsov2muF3PW+xZT1jTPSGu0cvOxLPEZNSibAg=
 github.com/liasica/swag/v2 v2.0.0-rc5.0.20260126010740-7bf831af7ec4 h1:6VaYswbogfE/vHpxuihXYkJDf3rpSKd2aH8Sl9tPL8g=
 github.com/liasica/swag/v2 v2.0.0-rc5.0.20260126010740-7bf831af7ec4/go.mod h1:i6L9Qnjsov2muF3PW+xZT1jTPSGu0cvOxLPEZNSibAg=
+github.com/liasica/swag/v2 v2.0.0-rc5.0.20260202020517-5f65139de086 h1:cLnKBm7qcrkvr2faD16W2+Zj/S5f9F7WabLhj9SeSXY=
+github.com/liasica/swag/v2 v2.0.0-rc5.0.20260202020517-5f65139de086/go.mod h1:i6L9Qnjsov2muF3PW+xZT1jTPSGu0cvOxLPEZNSibAg=
 github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
 github.com/mattn/go-colorable v0.1.14/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stgPZH1UqBm1s8=
 github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
