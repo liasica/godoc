@@ -84,9 +84,10 @@ func Generate(cfgPath string) error {
 	}
 
 	gc := &gen.Config{
-		SearchDir:   searchDir,
-		MainAPIFile: mainFile,
 		// ParseDependency: 1,
+
+		SearchDir:           searchDir,
+		MainAPIFile:         mainFile,
 		OutputDir:           output,
 		OutputTypes:         outputTypes,
 		GenerateOpenAPI3Doc: true,
