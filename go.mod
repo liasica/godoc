@@ -4,7 +4,7 @@ go 1.25
 
 require (
 	github.com/labstack/echo/v4 v4.15.0
-	github.com/liasica/swag/v2 v2.0.0-rc5.0.20260202060418-f2924891d198
+	github.com/liasica/swag/v2 v2.0.0-rc5.0.20260202063300-f6f5b60f99d0
 	github.com/spf13/cobra v1.10.2
 	golang.org/x/mod v0.32.0
 	gopkg.in/yaml.v3 v3.0.1
